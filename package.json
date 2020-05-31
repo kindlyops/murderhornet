@@ -1,8 +1,9 @@
 {
   "name": "murderhornet",
   "productName": "murderhornet",
-  "version": "1.0.5",
-  "description": "My Electron application description",
+  "version": "1.0.8",
+  "description": "Video streaming for the people",
+  "repository": "kindlyops/murderhornet",
   "main": ".webpack/main",
   "scripts": {
     "start": "electron-forge start",
@@ -20,6 +21,7 @@
   "config": {
     "forge": {
       "packagerConfig": {
+        "icon": "./assets/Icon.icns",
         "osxSign": {
           "hardened-runtime": true,
           "gatekeeper-assess": false,
@@ -38,12 +40,6 @@
           "config": {
             "name": "murderhornet"
           }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin"
-          ]
         },
         {
           "name": "@electron-forge/maker-dmg",
