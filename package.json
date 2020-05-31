@@ -1,7 +1,7 @@
 {
   "name": "murderhornet",
   "productName": "murderhornet",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
@@ -19,7 +19,19 @@
   "license": "Apache-2.0",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "osxSign": {
+          "hardened-runtime": true,
+          "gatekeeper-assess": false,
+          "entitlements": "./src/entitlements.plist",
+          "entitlements-inherit": "./src/entitlements.plist",
+          "signature-flags": "library"
+        },
+        "osxNotarize": {
+          "appleId": "elliot.murphy@gmail.com",
+          "appleIdPassword": "@keychain:AC_PASSWORD"
+        }
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
