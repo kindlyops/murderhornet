@@ -19,8 +19,6 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
 };
 
 // This method will be called when Electron has finished
@@ -32,9 +30,9 @@ app.on('ready', createWindow);
 app.on('window-all-closed', () => {
   // On OS X it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
+  // however that seems dumb.
+  // if (process.platform !== 'darwin') {
     app.quit();
-  }
 });
 
 app.on('activate', () => {
