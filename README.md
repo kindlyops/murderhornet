@@ -31,9 +31,12 @@ Remove quarantine attribute
     yarn run make -p win32
     yarn run make -p darwin
     yarn run make -p linux
+    # increment version in package.json
     yarn run publish --platform=linux
     yarn run publish --platform=win32
     yarn run publish --platform=darwin
+    # commit and push package.json version bump
+    # edit github draft release and change to published / create tag
 
 ## Credits
 
