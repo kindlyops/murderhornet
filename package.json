@@ -69,7 +69,11 @@
       "publishers": [
         {
           "name": "@electron-forge/publisher-github",
-          "platforms": ["darwin", "linux", "win32"],
+          "platforms": [
+            "darwin",
+            "linux",
+            "win32"
+          ],
           "config": {
             "repository": {
               "owner": "kindlyops",
@@ -122,6 +126,7 @@
     "typescript": "^3.7.0"
   },
   "dependencies": {
+    "aws-sdk": "^2.776.0",
     "electron-squirrel-startup": "^1.0.0",
     "update-electron-app": "^1.5.0"
   }
