@@ -1,11 +1,9 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 //import { SSOOIDCClient, CreateTokenCommand } from "@aws-sdk/client-sso-oidc";
 import * as aws from "aws-sdk";
 import * as awsCli from 'aws-cli-js';
 import path from 'path';
-import { float } from 'aws-sdk/clients/lightsail';
 
-declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 
 interface RoleCredentials {
   accessKeyId?: string;
@@ -124,11 +122,13 @@ const createWindow = async () => {
     height: 600,
     width: 800,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true
     }
   });
   // and load the index.html of the app.
-  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+  mainWindow.loadFile(path.join(__dirname, "../index.html"));
+  mainWindow.webContents.openDevTools();
 
 };
 
@@ -158,3 +158,7 @@ app.on('activate', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
+ipcMain.on('save', (event, arg) => {
+  console.log(`Saved: ${arg}`);
+  event.sender.send('asynchronous-reply', 'pong');
+});

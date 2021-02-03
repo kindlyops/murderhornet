@@ -27,5 +27,23 @@
  */
 
 import './index.css';
+import { ipcRenderer } from 'electron';
+import { stringType } from 'aws-sdk/clients/iam';
 
-console.log('👋 This message is being logged by "renderer.js", included via webpack');
+interface AccountInfo {
+    accountId: stringType
+}
+
+const saveBtn = document.getElementById('save');
+
+saveBtn.addEventListener('click', () => {
+    let account: AccountInfo;
+    account.accountId = (document.getElementById('account-id') as HTMLTextAreaElement).value;
+    console.log(account);
+  ipcRenderer.send('save', account);
+});
+
+ipcRenderer.on('asynchronous-reply', (event, arg) => {
+  const message = `Asynchronous message reply: ${arg}`;
+  document.getElementById('async-reply').innerHTML = message;
+});
