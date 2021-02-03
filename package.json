@@ -69,7 +69,11 @@
       "publishers": [
         {
           "name": "@electron-forge/publisher-github",
-          "platforms": ["darwin", "linux", "win32"],
+          "platforms": [
+            "darwin",
+            "linux",
+            "win32"
+          ],
           "config": {
             "repository": {
               "owner": "kindlyops",
@@ -84,6 +88,7 @@
           "@electron-forge/plugin-webpack",
           {
             "mainConfig": "./webpack.main.config.js",
+            "preload": "./webpack.preload.config.js",
             "renderer": {
               "config": "./webpack.renderer.config.js",
               "entryPoints": [
@@ -122,6 +127,9 @@
     "typescript": "^3.7.0"
   },
   "dependencies": {
+    "@aws-sdk/client-sso-oidc": "^3.4.1",
+    "aws-cli-js": "^2.0.6",
+    "aws-sdk": "^2.835.0",
     "electron-squirrel-startup": "^1.0.0",
     "update-electron-app": "^1.5.0"
   }
