@@ -28,22 +28,22 @@
 
 import './index.css';
 import { ipcRenderer } from 'electron';
-import { stringType } from 'aws-sdk/clients/iam';
 
 interface AccountInfo {
-    accountId: stringType
+    accountId: string
 }
 
 const saveBtn = document.getElementById('save');
 
 saveBtn.addEventListener('click', () => {
-    let account: AccountInfo;
-    account.accountId = (document.getElementById('account-id') as HTMLTextAreaElement).value;
-    console.log(account);
+    //var account: AccountInfo;
+   // account.accountId = (document.getElementById('account-id') as HTMLTextAreaElement).value.toString();
+   var account = (document.getElementById('account-id') as HTMLTextAreaElement).value;
+   console.log(account);
   ipcRenderer.send('save', account);
 });
 
-ipcRenderer.on('asynchronous-reply', (event, arg) => {
-  const message = `Asynchronous message reply: ${arg}`;
-  document.getElementById('async-reply').innerHTML = message;
+ipcRenderer.on('saved-reply', (event, arg) => {
+  const message = `${arg}`;
+  document.getElementById('messages').innerHTML = message;
 });

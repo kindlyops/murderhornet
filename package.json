@@ -4,9 +4,9 @@
   "version": "1.0.12",
   "description": "Video streaming for the people",
   "repository": "kindlyops/murderhornet",
+  "main": ".webpack/main",
   "scripts": {
-    "build": "tsc",
-    "start": "npm run build && electron ./dist/index.js",
+    "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
@@ -82,6 +82,24 @@
             "prerelease": true
           }
         }
+      ],
+      "plugins": [
+        [
+          "@electron-forge/plugin-webpack",
+          {
+            "mainConfig": "./webpack.main.config.js",
+            "renderer": {
+              "config": "./webpack.renderer.config.js",
+              "entryPoints": [
+                {
+                  "html": "./src/index.html",
+                  "js": "./src/renderer.ts",
+                  "name": "main_window"
+                }
+              ]
+            }
+          }
+        ]
       ]
     }
   },

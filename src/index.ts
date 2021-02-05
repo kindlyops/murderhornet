@@ -1,9 +1,10 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
-//import { SSOOIDCClient, CreateTokenCommand } from "@aws-sdk/client-sso-oidc";
 import * as aws from "aws-sdk";
 import * as awsCli from 'aws-cli-js';
 import path from 'path';
 
+declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
+declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: any;
 
 interface RoleCredentials {
   accessKeyId?: string;
@@ -122,12 +123,12 @@ const createWindow = async () => {
     height: 600,
     width: 800,
     webPreferences: {
-      preload: path.join(__dirname, 'preload.js'),
+      preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true
     }
   });
   // and load the index.html of the app.
-  mainWindow.loadFile(path.join(__dirname, "../index.html"));
+  mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
   mainWindow.webContents.openDevTools();
 
 };
@@ -160,5 +161,5 @@ app.on('activate', () => {
 // code. You can also put them in separate files and import them here.
 ipcMain.on('save', (event, arg) => {
   console.log(`Saved: ${arg}`);
-  event.sender.send('asynchronous-reply', 'pong');
+  event.sender.send('saved-reply', `Saved: ${arg}`);
 });
