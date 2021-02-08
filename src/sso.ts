@@ -8,6 +8,11 @@ export class AccountInfo {
   accountId?: string;
   roleName?: string;
   region?: string;
+  emailAddress?: string;
+  roles?: {
+    roleName?: string;
+    accountId?: string
+  }[];
 }
 
 interface RoleCredentials {
@@ -27,10 +32,11 @@ interface CacheToken {
 
 let cacheToken: CacheToken;
 let roleCredentials: RoleCredentials;
+let accountInfo: AccountInfo;
 
 export const loginSSO = async (account: AccountInfo) => {
   const awsCmd = new awsCli.Aws();
-
+  accountInfo = account;
   // For testing purposes instead of text entry boxes
   const profile = "SandboxSSOAdmin";
 
@@ -85,31 +91,31 @@ export const loginSSO = async (account: AccountInfo) => {
               clientSecret: regData.clientSecret,
               grantType: 'urn:ietf:params:oauth:grant-type:device_code',
               deviceCode: data.deviceCode
-            }, function(tokenErr,tokenData) {
+            }, async function(tokenErr,tokenData) {
               if (tokenErr) console.log(tokenErr, tokenErr.stack); // an error occurred
               else {
                 console.log(tokenData);
                 cacheToken = tokenData;
                 const sso = new aws.SSO({region: account.region});
                 // TODO List Accounts the user can select
-                sso.listAccounts({
-                  accessToken: cacheToken.accessToken
-                }, function(listAccountsError, listAccountsData){
-                  listAccountsData.accountList.forEach(function(val, index, accountArray){
-                    console.log(val);
-                  });
+                const listAccountsRequest: aws.SSO.ListAccountsRequest = {
+                  accessToken: cacheToken.accessToken,
+                };
+
+                getAccounts(listAccountsRequest).then( function(list){
                   let focusedWindow = BrowserWindow.getFocusedWindow();
-                  focusedWindow.webContents.send('list-accounts', listAccountsData.accountList);
-                  // Get Role Credentials
-                  //sso.getRoleCredentials({
-                  //  accountId: account.accountId,
-                  //  accessToken: cacheToken.accessToken,
-                  //  roleName: account.roleName
-                  //}, function(ssoErr, ssoData){
-                  //    console.log(ssoErr, ssoData);
-                  //    roleCredentials = ssoData.roleCredentials;
-                  //});
+                  console.log('Done getting accounts. Now getting roles.');
+                  console.log(list);
+                  const roles = getRoles(list);
+                  roles.then(function(accountsWithRoles){
+                    console.log('Done getting Roles. Now sending to renderer!');
+                    console.log(accountsWithRoles);
+                    focusedWindow.webContents.send('list-accounts', accountsWithRoles);
+                  });
                 });
+
+
+
               }
             });
           });
@@ -117,4 +123,41 @@ export const loginSSO = async (account: AccountInfo) => {
       });
     }
   });
+};
+
+const getAccounts = (listAccountsRequest: aws.SSO.ListAccountsRequest) => {
+	return new Promise<AccountInfo[]>(resolve => {
+    const sso = new aws.SSO({region: accountInfo.region});
+		sso.listAccounts(listAccountsRequest, async (err, data: aws.SSO.ListAccountsResponse) => {
+			const accounts: AccountInfo[] = data.accountList;
+      resolve(accounts);
+		});
+	});
+};
+
+const getRoles = (accounts: AccountInfo[]) => {
+	return new Promise<AccountInfo[]>(resolve => {
+    const sso = new aws.SSO({region: accountInfo.region});
+    let accountsProcessed = 0;
+    let tempAccounts: AccountInfo[] = [];
+    for (const account of accounts) {
+      let tempAccount: AccountInfo = account;
+      tempAccount.roles = [];
+      accountsProcessed++;
+      // List Account Roles
+      sso.listAccountRoles({
+        accessToken: cacheToken.accessToken,
+        accountId: tempAccount.accountId,
+      }, (err, data) => {
+          tempAccount.roles = data.roleList;
+          tempAccounts.push(tempAccount);
+          console.log(tempAccount);
+          console.log(`accounts processed: ${accountsProcessed} of ${tempAccounts.length}`);
+          if (accountsProcessed === tempAccounts.length) {
+            console.log(`resolved roles for: ${tempAccounts}`);
+            resolve(tempAccounts);
+          }
+      });
+    };
+	});
 };

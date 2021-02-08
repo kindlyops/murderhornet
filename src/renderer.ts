@@ -57,10 +57,16 @@ ipcRenderer.on('list-accounts', (event, accounts) => {
   var parentDiv = document.getElementById('options');
   parentDiv.appendChild(selectList);
   //Create and append the options
+  console.log(accounts);
   for (var i = 0; i < accounts.length; i++) {
-    var option = document.createElement("option");
-    option.setAttribute("value", accounts[i].accountId);
-    option.text = accounts[i].accountName;
-    selectList.appendChild(option);
+    if(accounts[i].roles) {
+      for (var x = 0; x < accounts[i].roles.length; x++) {
+        var option = document.createElement("option");
+        option.setAttribute("value", `${accounts[i].accountId}::${accounts[i].roles[x].roleName}`);
+        option.text = `${accounts[i].accountName} - ${accounts[i].accountId} - ${accounts[i].roles[x].roleName}`;
+        selectList.appendChild(option);
+      }
+    }
+
   }
 });
