@@ -32,7 +32,30 @@ interface CacheToken {
 
 let cacheToken: CacheToken;
 let roleCredentials: RoleCredentials;
-let accountInfo: AccountInfo;
+export let accountInfo: AccountInfo;
+
+export let awsConfig = new aws.Config();
+
+export const saveCreds = async (role: aws.SSO.RoleInfo) => {
+  const sso = new aws.SSO({region: accountInfo.region});
+  console.log(role);
+  sso.getRoleCredentials({
+    accessToken: cacheToken.accessToken,
+    accountId: role.accountId,
+    roleName: role.roleName
+  }, function(err,data){
+    console.log(err, data);
+    const creds = {
+      accessKeyId: data.roleCredentials.accessKeyId,
+      secretAccessKey: data.roleCredentials.secretAccessKey,
+      sessionToken: data.roleCredentials.sessionToken
+    }
+    awsConfig.update({
+      credentials: creds
+    });
+    //const sts = new aws.STS({region: accountInfo.region});
+  });
+}
 
 export const loginSSO = async (account: AccountInfo) => {
   const awsCmd = new awsCli.Aws();
@@ -113,9 +136,6 @@ export const loginSSO = async (account: AccountInfo) => {
                     focusedWindow.webContents.send('list-accounts', accountsWithRoles);
                   });
                 });
-
-
-
               }
             });
           });

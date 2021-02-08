@@ -51,6 +51,11 @@ ipcRenderer.on('saved-reply', (event, account) => {
   document.getElementById('messages').innerHTML = message;
 });
 
+ipcRenderer.on('account-reply', (event, msg) => {
+  const message = `${msg}`;
+  document.getElementById('messages').innerHTML = message;
+});
+
 ipcRenderer.on('list-accounts', (event, accounts) => {
   var selectList = document.createElement("select");
   selectList.id = "account-list";
@@ -62,11 +67,19 @@ ipcRenderer.on('list-accounts', (event, accounts) => {
     if(accounts[i].roles) {
       for (var x = 0; x < accounts[i].roles.length; x++) {
         var option = document.createElement("option");
-        option.setAttribute("value", `${accounts[i].accountId}::${accounts[i].roles[x].roleName}`);
+        option.setAttribute("value", `${JSON.stringify(accounts[i].roles[x])}`);
         option.text = `${accounts[i].accountName} - ${accounts[i].accountId} - ${accounts[i].roles[x].roleName}`;
         selectList.appendChild(option);
       }
     }
-
   }
+  var useButton = document.createElement("button");
+  useButton.innerText = 'Use Account';
+  useButton.addEventListener('click', () => {
+    var account = JSON.parse((document.getElementById('account-list') as HTMLSelectElement).value);
+    console.log(`Try using: ${JSON.stringify(account)}`)
+    //console.log(accountDetails);
+    ipcRenderer.send('use-account', account);
+  });
+  parentDiv.appendChild(useButton);
 });
