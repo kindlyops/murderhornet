@@ -15,13 +15,6 @@ export class AccountInfo {
   }[];
 }
 
-interface RoleCredentials {
-  accessKeyId?: string;
-  secretAccessKey?: string;
-  sessionToken?: string;
-  expiration?: number;
-}
-
 interface CacheToken {
   accessToken?: string;
   tokenType?: string;
@@ -31,32 +24,25 @@ interface CacheToken {
 }
 
 let cacheToken: CacheToken;
-let roleCredentials: RoleCredentials;
+
 export let accountInfo: AccountInfo;
 
 export let awsConfig = new aws.Config();
 
-export const saveCreds = async (role: aws.SSO.RoleInfo) => {
-  const sso = new aws.SSO({region: accountInfo.region});
+export let getSSOConfig = async function (role: aws.SSO.RoleInfo): Promise<aws.Config> {
   console.log(role);
-  sso.getRoleCredentials({
+  const creds = await getCredentials({
     accessToken: cacheToken.accessToken,
     accountId: role.accountId,
     roleName: role.roleName
-  }, function(err,data){
-    console.log(err, data);
-    const creds = {
-      accessKeyId: data.roleCredentials.accessKeyId,
-      secretAccessKey: data.roleCredentials.secretAccessKey,
-      sessionToken: data.roleCredentials.sessionToken
-    }
-    awsConfig.update({
+  });
+  return new aws.Config({
+      region: accountInfo.region,
       credentials: creds
-    });
-    //const sts = new aws.STS({region: accountInfo.region});
   });
 }
 
+// loginSSO begins the SSO login process
 export const loginSSO = async (account: AccountInfo) => {
   const awsCmd = new awsCli.Aws();
   accountInfo = account;
@@ -145,6 +131,22 @@ export const loginSSO = async (account: AccountInfo) => {
   });
 };
 
+// getCredentials returns credentials from the provided role
+const getCredentials = (getRoleCredentialsRequest: aws.SSO.GetRoleCredentialsRequest) => {
+	return new Promise<aws.Credentials>(resolve => {
+    const sso = new aws.SSO({region: accountInfo.region});
+		sso.getRoleCredentials(getRoleCredentialsRequest, async (err, data: aws.SSO.GetRoleCredentialsResponse) => {
+			const ssoCredentials = new aws.Credentials({
+        accessKeyId: data.roleCredentials.accessKeyId,
+        secretAccessKey: data.roleCredentials.secretAccessKey,
+        sessionToken: data.roleCredentials.sessionToken
+      });
+      resolve(ssoCredentials);
+    });
+  });
+};
+
+// getAccounts returns accounts the user has access to
 const getAccounts = (listAccountsRequest: aws.SSO.ListAccountsRequest) => {
 	return new Promise<AccountInfo[]>(resolve => {
     const sso = new aws.SSO({region: accountInfo.region});
@@ -155,6 +157,7 @@ const getAccounts = (listAccountsRequest: aws.SSO.ListAccountsRequest) => {
 	});
 };
 
+// getRoles returns roles the user has access to in an account
 const getRoles = (accounts: AccountInfo[]) => {
 	return new Promise<AccountInfo[]>(resolve => {
     const sso = new aws.SSO({region: accountInfo.region});
