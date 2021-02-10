@@ -60,19 +60,22 @@ class LoginOptions extends React.Component {
     return (
       <div>
         <div id="options">
-            <p><span>AWS SSO Name</span><label htmlFor="ssoName"></label>
+            <p><span>AWS SSO Name</span> <label htmlFor="ssoName"> </label>
             <span>
               <input type="text" id="sso-name" name="ssoName"/>
             </span>
           </p>
-          <label htmlFor="regions">Choose an AWS Region:</label>
+          <label htmlFor="regions">Choose an AWS Region: </label>
           <select name="regions" id="sso-region">
             <option value="us-east-1">us-east-1</option>
             <option value="us-east-2">us-east-2</option>
             <option value="us-west-1">us-west-1</option>
             <option value="us-west-2">us-west-2</option>
           </select>
-          <button
+
+        </div>
+        <div id="menu">
+        <button
           id="save"
           onClick={() => {
             var ssoName = (document.getElementById('sso-name') as HTMLTextAreaElement).value;
@@ -88,8 +91,6 @@ class LoginOptions extends React.Component {
       
           }}
           >Save</button>
-        </div>
-        <div id="menu">
           <LoginWithSSOCancelButton />
         </div>
       </div>
