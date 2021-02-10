@@ -1,11 +1,13 @@
 import { app, BrowserWindow, ipcMain } from 'electron';
 import {loginSSO, getSSOConfig } from './sso'
+import { getStreams, sendMetadata } from './ivs'
 import path from 'path';
 import * as aws from "aws-sdk";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: any;
 
+let appConfig: aws.Config;
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) { // eslint-disable-line global-require
   app.quit();
@@ -59,19 +61,24 @@ app.on('activate', () => {
 // code. You can also put them in separate files and import them here.
 ipcMain.on('save-sso', async (event, account) => {
   console.log(`Saved: ${account}`);
-  event.sender.send('saved-reply', account);
+  //event.sender.send('saved-reply', account);
   await loginSSO(account);
 });
 
+// use-account event handles account / role selection.
 ipcMain.on('use-account', async (event, role) => {
   console.log(`Loading: ${JSON.stringify(role)}`);
-
-  const conf = await getSSOConfig(role);
-  console.log(`Creds: ${JSON.stringify(conf)}`);
-  const sts = new aws.STS(conf);
+  appConfig = await getSSOConfig(role);
+  console.log(`Creds: ${JSON.stringify(appConfig)}`);
+  const sts = new aws.STS(appConfig);
   sts.getCallerIdentity({}, function(err,data){
     console.log(err, data);
-    event.sender.send('account-reply', JSON.stringify(data));
+    //event.sender.send('account-reply', JSON.stringify(data));
   });
+  const streams = await getStreams(appConfig);
+  event.sender.send('list-streams', streams);
+});
 
+ipcMain.on('send-metadata', async (event, metadata) => {
+  await sendMetadata(appConfig, metadata);
 });
