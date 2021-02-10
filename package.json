@@ -93,7 +93,7 @@
               "entryPoints": [
                 {
                   "html": "./src/index.html",
-                  "js": "./src/renderer.ts",
+                  "js": "./src/app.tsx",
                   "name": "main_window"
                 }
               ]
@@ -113,6 +113,7 @@
     "@electron-forge/plugin-webpack": "6.0.0-beta.51",
     "@electron-forge/publisher-github": "6.0.0-beta.51",
     "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
+    "@types/react-select": "^4.0.13",
     "@typescript-eslint/eslint-plugin": "^2.18.0",
     "@typescript-eslint/parser": "^2.18.0",
     "css-loader": "^3.0.0",
@@ -127,9 +128,14 @@
   },
   "dependencies": {
     "@aws-sdk/client-sso-oidc": "^3.4.1",
+    "@types/react": "^17.0.1",
+    "@types/react-dom": "^17.0.0",
     "aws-cli-js": "^2.0.6",
     "aws-sdk": "^2.835.0",
     "electron-squirrel-startup": "^1.0.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-select": "^4.1.0",
     "update-electron-app": "^1.5.0"
   }
 }
