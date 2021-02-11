@@ -47,7 +47,7 @@ export const loginSSO = async (account: AccountInfo) => {
   const awsCmd = new awsCli.Aws();
   accountInfo = account;
   // For testing purposes instead of text entry boxes
-  const profile = "SandboxSSOAdmin";
+  //const profile = "SandboxSSOAdmin";
 
   // TODO add a text entry for this
   //const url = await awsCmd.command(`configure get sso_start_url --profile ${profile}`).then(function (resp){
@@ -55,9 +55,9 @@ export const loginSSO = async (account: AccountInfo) => {
   //});
 
   // TODO list roles and let user select
-  account.roleName = await awsCmd.command(`configure get sso_role_name --profile ${profile}`).then(function (resp){
-    return resp.raw.trim();
-  });
+  //account.roleName = await awsCmd.command(`configure get sso_role_name --profile ${profile}`).then(function (resp){
+  //  return resp.raw.trim();
+  //});
   // TODO add a text entry for this
   //const account = await awsCmd.command(`configure get sso_account_id --profile ${profile}`).then(function (resp){
     // return resp.raw.trim();
