@@ -22,13 +22,20 @@ jobs:
           security add-generic-password -a "elliot.murphy@gmail.com" -w ${{ secrets.MAC_AC_PASSWORD }} -s "AC_PASSWORD"
           mkdir -p ~/private_keys/
           echo '${{ secrets.MAC_APP_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.MAC_APP_API_KEY_ID }}.p8
+      # this is tibdex/github-app-token v1.3, pinned to the commit SHA for security
+     - uses: tibdex/github-app-token@36464acb844fc53b9b8b2401da68844f6b05ebb0
+       id: generate-token
+       with:
+         app_id: ${{ secrets.AUTH_FOR_GITHUB_APP_ID }}
+         private_key: ${{ secrets.AUTH_FOR_GITHUB_PRIVATE_KEY }}
       - name: Build/release Electron app
         uses: jsoma/action-electron-builder@master
         env:
           API_KEY_ID: ${{ secrets.MAC_APP_API_KEY_ID }}
           API_KEY_ISSUER_ID: ${{ secrets.MAC_APP_API_KEY_ISSUER_ID }}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
         with:
-          github_token: ${{ secrets.github_token }}
+          github_token: ${{ steps.generate-token.outputs.token }}
           mac_certs: ${{ secrets.MAC_APP_CERTS }}
           mac_certs_password: ${{ secrets.MAC_APP_CERTS_PASSWORD }}
           # TODO provision windows signing certs
