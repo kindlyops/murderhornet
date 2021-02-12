@@ -22,7 +22,7 @@ jobs:
           mkdir -p ~/private_keys/
           echo '${{ secrets.MAC_APP_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.MAC_APP_API_KEY_ID }}.p8
       - name: Build/release Electron app
-        uses: jsoma/action-electron-builder@v1.4.0
+        uses: jsoma/action-electron-builder@master
         env:
           API_KEY_ID: ${{ secrets.MAC_APP_API_KEY_ID }}
           API_KEY_ISSUER_ID: ${{ secrets.MAC_APP_API_KEY_ISSUER_ID }}
