@@ -26,17 +26,12 @@ Remove quarantine attribute
 
     xattr -d com.apple.quarantine node_modules/electron-winstaller/vendor/rcedit.exe 
 
-## building and publishing
+## publishing a release
 
-    yarn run make -p win32
-    yarn run make -p darwin
-    yarn run make -p linux
-    # increment version in package.json
-    yarn run publish --platform=linux
-    yarn run publish --platform=win32
-    yarn run publish --platform=darwin
-    # commit and push package.json version bump
-    # edit github draft release and change to published / create tag
+1. increment version in package.json, commit
+1. tag your commit, ie: `git tag v1.2.3`
+1. push changes and tags to github (`git push && git push --tags`)
+1. after builds finish, edit github draft release and change to published
 
 ## Credits
 
