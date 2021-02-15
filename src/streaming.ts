@@ -1,4 +1,3 @@
-import { Bool } from "aws-sdk/clients/clouddirectory";
 import Ffmpeg from "fluent-ffmpeg";
 
 var ffmpeg = require('fluent-ffmpeg');

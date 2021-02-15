@@ -7,6 +7,7 @@ interface Stream {
   health?: string,
   viewerCount?: number,
   startTime?: Date,
+  playbackUrl?: string,
 };
 
 interface Channel {
@@ -29,10 +30,11 @@ export let getChannels = async function (config: aws.Config): Promise<Channel[]>
 // Get List of Live Streams in account
 export let getStreams = async function (config: aws.Config): Promise<Stream[]> {
   const streams = await getStreamList(config, {});
-  console.log(`getStreams: ${JSON.stringify(streams)}`);
+  const updatedStreams = await updateStreamsList(config, streams);
+  console.log(`getStreams: ${JSON.stringify(updatedStreams)}`);
   let focusedWindow = BrowserWindow.getFocusedWindow();
-  focusedWindow.webContents.send('list-streams', streams);
-  return streams;
+  focusedWindow.webContents.send('list-streams', updatedStreams);
+  return updatedStreams;
 }
 
 // Get List of Live Streams in account
@@ -44,7 +46,7 @@ export let sendMetadata = async function (config: aws.Config, metadata: {channel
   return response;
 }
 
-// Get the the endpoint url including the StreamKey
+// Get the the endpoint url including the StreamKey and playback url
 export let getEndpoint = async function (config: aws.Config, channelArn: string): Promise<string> {
   const endpoint = await getStreamEndpoint(config, {
     arn: channelArn
@@ -128,6 +130,35 @@ const getStreamList = (config: aws.Config, listStreamsRequest: aws.IVS.ListStrea
       });
     });
   };
+
+  // getChannelPlaybackUrl returns the channel playback url
+  const getChannelPlaybackUrl = (config: aws.Config, getChannelRequest: aws.IVS.GetChannelRequest) => {
+    return new Promise<string>((resolve,reject) => {
+      config.region = 'us-east-1';
+      const ivs = new aws.IVS(config);
+      ivs.getChannel(getChannelRequest, async (err, data: aws.IVS.GetChannelResponse) => {
+        if(err){
+          reject(err);
+        }
+        resolve(data.channel.playbackUrl);
+      });
+    });
+  };
+  // updateStreamsList adds playback url to streams lists
+  const updateStreamsList = (config: aws.Config, streams: Stream[]) => {
+    return new Promise<Stream[]>(async (resolve,reject) => {
+      config.region = 'us-east-1';
+      let newStreams: Stream[] = [];
+      for await ( let stream of streams) {
+        stream.playbackUrl = await getChannelPlaybackUrl(config,{arn: stream.channelArn});
+        console.log(`updated stream: to use ${stream.playbackUrl}`);
+        newStreams.push(stream);
+      };
+      console.log(`newstreams: ${JSON.stringify(newStreams)}`);
+      resolve(newStreams);
+    });
+  };
+
 // Start stop streams
 
 // putMetadata sends metadata to the IVS stream
