@@ -67,8 +67,8 @@ class LoginOptions extends React.Component {
           </p>
           <label htmlFor="regions">Choose an AWS Region: </label>
           <select name="regions" id="sso-region">
-            <option value="us-east-1">us-east-1</option>
             <option value="us-east-2">us-east-2</option>
+            <option value="us-east-1">us-east-1</option>
             <option value="us-west-1">us-west-1</option>
             <option value="us-west-2">us-west-2</option>
           </select>
