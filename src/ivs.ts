@@ -7,7 +7,25 @@ interface Stream {
   health?: string,
   viewerCount?: number,
   startTime?: Date,
+};
+
+interface Channel {
+  arn?: string,
+  name?: string,
+  latencyMode?: string,
+  authorized?: Boolean,
+  tags?: aws.IVS.Tags,
+};
+
+// Get List of Channels
+export let getChannels = async function (config: aws.Config): Promise<Channel[]> {
+  const channels = await getChannelList(config, {});
+  console.log(`getChannels: ${JSON.stringify(channels)}`);
+  let focusedWindow = BrowserWindow.getFocusedWindow();
+  focusedWindow.webContents.send('list-channels', channels);
+  return channels;
 }
+
 // Get List of Live Streams in account
 export let getStreams = async function (config: aws.Config): Promise<Stream[]> {
   const streams = await getStreamList(config, {});
@@ -26,8 +44,64 @@ export let sendMetadata = async function (config: aws.Config, metadata: {channel
   return response;
 }
 
+// Get the the endpoint url including the StreamKey
+export let getEndpoint = async function (config: aws.Config, channelArn: string): Promise<string> {
+  const endpoint = await getStreamEndpoint(config, {
+    arn: channelArn
+  });
+  const streamKeyArn = await getStreamKeyArn(config, {
+    channelArn: channelArn
+  });
+  const streamKey = await getStreamKey(config, {
+    arn: streamKeyArn
+  });
+  return `${endpoint}:443/app/${streamKey}`;
+}
 
-  // getCredentials returns credentials from the provided role
+// getStreamKey returns the selected streamkey
+const getStreamKey = (config: aws.Config, getStreamKeyRequest: aws.IVS.GetStreamKeyRequest) => {
+  return new Promise<string>((resolve,reject) => {
+    config.region = 'us-east-1';
+    const ivs = new aws.IVS(config);
+    ivs.getStreamKey(getStreamKeyRequest, async (err, data: aws.IVS.GetStreamKeyResponse ) => {
+      if(err){
+        reject(err);
+      }
+      resolve(data.streamKey.value);
+    });
+  });
+};
+
+// getStreamKeyArn returns the selected stream key arn
+const getStreamKeyArn = (config: aws.Config, listStreamKeyRequest: aws.IVS.ListStreamKeysRequest) => {
+  return new Promise<string>((resolve,reject) => {
+    config.region = 'us-east-1';
+    const ivs = new aws.IVS(config);
+    ivs.listStreamKeys(listStreamKeyRequest, async (err, data: aws.IVS.ListStreamKeysResponse ) => {
+      if(err){
+        reject(err);
+      }
+      resolve(data.streamKeys[0].arn);
+    });
+  });
+};
+
+// getStreamEndpoint returns the select stream endpoint
+const getStreamEndpoint = (config: aws.Config, getChannelRequest: aws.IVS.GetChannelRequest) => {
+  return new Promise<string>((resolve,reject) => {
+    config.region = 'us-east-1';
+    const ivs = new aws.IVS(config);
+    ivs.getChannel(getChannelRequest, async (err, data: aws.IVS.GetChannelResponse ) => {
+      if(err){
+        reject(err);
+      }
+      resolve(data.channel.ingestEndpoint);
+    });
+  });
+};
+
+
+  // getStreamList returns a list of IVS streams
 const getStreamList = (config: aws.Config, listStreamsRequest: aws.IVS.ListStreamsRequest) => {
 	return new Promise<Stream[]>((resolve,reject) => {
     config.region = 'us-east-1';
@@ -40,20 +114,33 @@ const getStreamList = (config: aws.Config, listStreamsRequest: aws.IVS.ListStrea
     });
   });
 };
-// Start stop streams
 
-// Send text to stream metadata
-  // getCredentials returns credentials from the provided role
-  const putMetadata = (config: aws.Config, putMetadataRequest: aws.IVS.PutMetadataRequest) => {
-    return new Promise<Stream[]>((resolve,reject) => {
+  // getChannelList returns a list of IVS channels
+  const getChannelList = (config: aws.Config, listChannelsRequest: aws.IVS.ListChannelsRequest) => {
+    return new Promise<Channel[]>((resolve,reject) => {
       config.region = 'us-east-1';
       const ivs = new aws.IVS(config);
-      ivs.putMetadata(putMetadataRequest, async (err, data: any ) => {
+      ivs.listChannels(listChannelsRequest, async (err, data: aws.IVS.ListChannelsResponse) => {
         if(err){
           reject(err);
         }
-        resolve(data);
+        resolve(data.channels);
       });
     });
   };
+// Start stop streams
+
+// putMetadata sends metadata to the IVS stream
+const putMetadata = (config: aws.Config, putMetadataRequest: aws.IVS.PutMetadataRequest) => {
+  return new Promise<Stream[]>((resolve,reject) => {
+    config.region = 'us-east-1';
+    const ivs = new aws.IVS(config);
+    ivs.putMetadata(putMetadataRequest, async (err, data: any ) => {
+      if(err){
+        reject(err);
+      }
+      resolve(data);
+    });
+  });
+};
 
