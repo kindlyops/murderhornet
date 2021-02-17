@@ -28,7 +28,7 @@ jobs:
           KEYCHAIN_PASSWORD: cicd
         run: |
           # import code signing identity for MacOS
-          echo "$MACOS_CERTIFICATE" | base64 —-decode > certificate.p12
+          echo "${MACOS_CERTIFICATE}" | base64 —-decode > certificate.p12
           security create-keychain -p $KEYCHAIN_PASSWORD build.keychain security default-keychain -s build.keychain
           security unlock-keychain -p $KEYCHAIN_PASSWORD build.keychain
           security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
