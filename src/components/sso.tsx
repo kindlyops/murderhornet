@@ -14,6 +14,8 @@ export class LoginWithSSOButton extends React.Component {
   render() {
     return (
       <button
+        type="button"
+        className="py-3 px-7 mt-6 text-white bg-indigo-500 rounded-md focus:bg-indigo-600 focus:outline-none"
         id="aws-sso-login"
         onClick={() => {
           ReactDOM.render(
@@ -31,6 +33,8 @@ class LoginWithSSOCancelButton extends React.Component {
     return (
       <button
         id="aws-sso-login-cancel"
+        type="button"
+        className="p-3 py-3 px-7 mt-6 text-white bg-black rounded-md focus:bg-indigo-600 focus:outline-none"
         onClick={() => {
           ReactDOM.render(<LoginWithSSOButton />, document.getElementById('login'));
         }}
@@ -44,6 +48,8 @@ class UseAccountButton extends React.Component {
     return (
       <button
         id="use-aws-account"
+        type="button"
+        className="py-3 px-7 mt-6 text-white bg-indigo-500 rounded-md focus:bg-indigo-600 focus:outline-none"
         onClick={ () => {
             var account = JSON.parse(selectedAccount.value);
             console.log(`Try using: ${JSON.stringify(account)}`)
@@ -59,14 +65,14 @@ class LoginOptions extends React.Component {
   render() {
     return (
       <div>
-        <div id="options">
+        <div className="w-full" id="options">
             <p><span>AWS SSO Name</span> <label htmlFor="ssoName"> </label>
             <span>
               <input type="text" id="sso-name" name="ssoName"/>
             </span>
           </p>
           <label htmlFor="regions">Choose an AWS Region: </label>
-          <select name="regions" id="sso-region">
+          <select className="flex col-auto" name="regions" id="sso-region">
             <option value="us-east-2">us-east-2</option>
             <option value="us-east-1">us-east-1</option>
             <option value="us-west-1">us-west-1</option>
@@ -77,6 +83,7 @@ class LoginOptions extends React.Component {
         <div id="menu">
         <button
           id="save"
+          className="py-3 px-7 mt-6 text-white bg-indigo-500 rounded-md focus:bg-indigo-600 focus:outline-none"
           onClick={() => {
             var ssoName = (document.getElementById('sso-name') as HTMLTextAreaElement).value;
             var ssoRegion = (document.getElementById('sso-region') as HTMLSelectElement).value;
@@ -135,6 +142,7 @@ ipcRenderer.on('list-accounts', (event, accounts) => {
   ReactDOM.render(
     <Select 
       id="account-list"
+      className="w-full"
       options={accountOptions}
       onChange={handleChange.bind(this)}
     />,

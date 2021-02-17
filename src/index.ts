@@ -24,10 +24,16 @@ const createWindow = async () => {
   const mainWindow = new BrowserWindow({
     height: 600,
     width: 800,
+    show: false,
+    backgroundColor: '#FAFAFA',
     webPreferences: {
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
       nodeIntegration: true
     }
+  });
+  mainWindow.once('ready-to-show', () =>{
+    mainWindow.show();
+    mainWindow.focus();
   });
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
