@@ -28,7 +28,7 @@ jobs:
           KEYCHAIN_PASSWORD: cicd
         run: |
           # import code signing identity for MacOS
-          echo $MACOS_CERTIFICATE | base64 —decode > certificate.p12
+          echo $MACOS_CERTIFICATE | base64 —-decode > certificate.p12
           security create-keychain -p $KEYCHAIN_PASSWORD build.keychain security default-keychain -s build.keychain
           security unlock-keychain -p $KEYCHAIN_PASSWORD build.keychain
           security import certificate.p12 -k build.keychain -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
@@ -37,7 +37,7 @@ jobs:
           # Import App Store Connect API key for app notarization on macOS
           security add-generic-password -a "elliot.murphy@gmail.com" -w ${{ secrets.MAC_AC_PASSWORD }} -s "AC_PASSWORD"
           mkdir -p ~/private_keys/
-          echo '${{ secrets.MAC_APP_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.MAC_APP_API_KEY_ID }}.p8
+          echo "${{ secrets.MAC_APP_API_KEY }}" > ~/private_keys/AuthKey_${{ secrets.MAC_APP_API_KEY_ID }}.p8
       # this is tibdex/github-app-token v1.3, pinned to the commit SHA for security
       - uses: tibdex/github-app-token@36464acb844fc53b9b8b2401da68844f6b05ebb0
         id: generate-token
