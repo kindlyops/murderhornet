@@ -18,6 +18,8 @@ class RefreshStreamsButton extends React.Component {
     return (
       <button
         id="refresh-streams"
+        type="button"
+        className="py-3 px-7 mt-6 text-white bg-indigo-500 rounded-md focus:bg-indigo-600 focus:outline-none"
         onClick={ () => {
             ipcRenderer.send('refresh-streams');
           }
@@ -32,6 +34,8 @@ class SendMetadataButton extends React.Component {
     return (
       <button
         id="send-metadata"
+        type="button"
+        className="py-3 px-7 mt-6 text-white bg-indigo-500 rounded-md focus:bg-indigo-600 focus:outline-none"
         onClick={ () => {
             var metadata = {
                 channelArn: selectedStream.value,
@@ -50,6 +54,8 @@ class StartStreamButton extends React.Component {
     return (
       <button
         id="start-stream"
+        type="button"
+        className="py-3 px-7 mt-6 text-white bg-indigo-500 rounded-md focus:bg-indigo-600 focus:outline-none"
         onClick={ () => {
             var channelArn = selectedChannel.value;
             ipcRenderer.send('start-stream', channelArn);
@@ -65,6 +71,8 @@ class StopStreamButton extends React.Component {
     return (
       <button
         id="start-stream"
+        type="button"
+        className="py-3 px-7 mt-6 text-white bg-indigo-500 rounded-md focus:bg-indigo-600 focus:outline-none"
         onClick={ () => {
             ipcRenderer.send('stop-stream');
           }
@@ -78,18 +86,19 @@ class IVSOptions extends React.Component {
   render() {
     return (
       <div>
-        <div id="ivs">
-            <p><span>Text To Send</span><label htmlFor="streamMetadata"></label>
+        <div className="container mx-auto bg-white min-w-1xl flex flex-col shadow" id="ivs">
+            <p className="text-center px-12 py-5"><span className="text-gray-800 text-3xl font-semibold">Text To Send</span><label htmlFor="streamMetadata"></label>
             <span>
-              <input type="text" id="metadata-input" name="streamMetadata"/>
+              <input className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300 dark:bg-gray-700 dark:text-white dark:placeholder-gray-500 dark:border-gray-600 dark:focus:ring-gray-900 dark:focus:border-gray-500" type="text" id="metadata-input" name="streamMetadata"/>
+              <SendMetadataButton/>
             </span>
+
           </p>
           <label htmlFor="streams">Choose a stream to send to:</label>
-        <div id="stream-list">Loading...</div>
-          <RefreshStreamsButton/>
-          <SendMetadataButton/>
-          <StartStreamButton/>
-          <StopStreamButton/>
+        <div  id="stream-list">Loading...</div>
+        <RefreshStreamsButton/>
+        <StartStreamButton/>
+        <StopStreamButton/>
         </div>
       </div>
     );
@@ -100,7 +109,8 @@ class IVSOptions extends React.Component {
 class App extends React.Component {
   render() {
     return (
-      <div className="flex bg-gray-100 p-10">
+      <div>
+      <div  id="login" className="w-full bg-gray-100 p-10">
         <div className="mb-auto mt-auto max-w-lg">
           <h1 className="text-3xl uppercase">🐝 Murder Hornet</h1>
           <p className="font-semibold mb-5">Video Tools for AWS IVS</p>
@@ -111,19 +121,15 @@ class App extends React.Component {
           
         </div>
 
-
-
-        <div className="flex items-center container mx-auto">
+        <div className="w-full items-center container mx-auto">
           <h1 className="my-3 text-3xl font-semibold text-gray-700 dark:text-gray-200"></h1>
           <p className="text-4xl flex justify-between mb-2 bg-green-500"></p>
-          <div className="flex items-center container mx-auto" id="login">
-
-          </div>
-          <p id="messages"></p>
-          <div className="flex items-center container mx-auto" id="stream-info"></div>
-          <div className="flex items-center container mx-auto" id="channel-list"></div>
         </div>
 
+      </div>
+        <p id="messages"></p>
+        <div className="w-full items-center container mx-auto" id="stream-info"></div>
+        <div className="w-full items-center container mx-auto" id="channel-list"></div>
       </div>
     );
   }
