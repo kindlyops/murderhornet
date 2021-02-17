@@ -1,4 +1,4 @@
-import './index.css';
+import './tailwind.css'
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { LoginWithSSOButton } from './components/sso';
@@ -96,8 +96,45 @@ class IVSOptions extends React.Component {
   }
 }
 
-  
-ReactDOM.render(<LoginWithSSOButton />, document.getElementById('login'));
+// Main App page
+class App extends React.Component {
+  render() {
+    return (
+      <div className="flex bg-gray-100 p-10">
+        <div className="mb-auto mt-auto max-w-lg">
+          <h1 className="text-3xl uppercase">🐝 Murder Hornet</h1>
+          <p className="font-semibold mb-5">Video Tools for AWS IVS</p>
+          <p>Let's stream some video and send metadata.</p>
+          <span className="py-3 px-7 mt-6">
+          <LoginWithSSOButton></LoginWithSSOButton>
+          </span>
+          
+        </div>
+
+
+
+        <div className="flex items-center container mx-auto">
+          <h1 className="my-3 text-3xl font-semibold text-gray-700 dark:text-gray-200"></h1>
+          <p className="text-4xl flex justify-between mb-2 bg-green-500"></p>
+          <div className="flex items-center container mx-auto" id="login">
+
+          </div>
+          <p id="messages"></p>
+          <div className="flex items-center container mx-auto" id="stream-info"></div>
+          <div className="flex items-center container mx-auto" id="channel-list"></div>
+        </div>
+
+      </div>
+    );
+  }
+}
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
 
 ipcRenderer.on('list-streams', async (event, streams) => {
   //Create and append the options
