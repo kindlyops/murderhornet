@@ -25,6 +25,7 @@ jobs:
         # Import App Store Connect API key for app notarization on macOS
         run: |
           security add-generic-password -a "elliot.murphy@gmail.com" -w ${{ secrets.MAC_AC_PASSWORD }} -s "AC_PASSWORD"
+          security find-identity
           mkdir -p ~/private_keys/
           echo '${{ secrets.MAC_APP_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.MAC_APP_API_KEY_ID }}.p8
       # this is tibdex/github-app-token v1.3, pinned to the commit SHA for security
