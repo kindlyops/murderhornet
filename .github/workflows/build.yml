@@ -53,7 +53,6 @@ jobs:
           API_KEY_ID: ${{ secrets.MAC_APP_API_KEY_ID }}
           API_KEY_ISSUER_ID: ${{ secrets.MAC_APP_API_KEY_ISSUER_ID }}
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-          FLUENTFFMPEG_COV: false
         with:
           github_token: ${{ steps.generate-token.outputs.token }}
           mac_certs: ${{ secrets.MAC_APP_CERTS }}
