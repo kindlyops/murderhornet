@@ -41,7 +41,6 @@ jobs:
           security add-generic-password -a "elliot.murphy@gmail.com" -w ${{ secrets.MAC_AC_PASSWORD }} -s "AC_PASSWORD"
           mkdir -p ~/private_keys/
           echo '${{ secrets.MAC_APP_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.MAC_APP_API_KEY_ID }}.p8
-          exit 1
       # this is tibdex/github-app-token v1.3, pinned to the commit SHA for security
       - uses: tibdex/github-app-token@36464acb844fc53b9b8b2401da68844f6b05ebb0
         id: generate-token
