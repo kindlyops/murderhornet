@@ -1,7 +1,7 @@
 {
   "name": "murderhornet",
   "productName": "murderhornet",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Video streaming for the people",
   "repository": "kindlyops/murderhornet",
   "main": ".webpack/main",
@@ -77,9 +77,10 @@
           "config": {
             "repository": {
               "owner": "kindlyops",
-              "name": "murderhornet"
+              "name": "murderhornet",
+              "draft": true
             },
-            "prerelease": true
+            "prerelease": false
           }
         }
       ],
