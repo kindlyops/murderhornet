@@ -23,7 +23,7 @@
       "packagerConfig": {
         "icon": "./assets/Icon.icns",
         "osxSign": {
-          "hardened-runtime": true,
+          "hardenedRuntime": true,
           "gatekeeper-assess": false,
           "entitlements": "./src/entitlements.plist",
           "entitlements-inherit": "./src/entitlements.plist",
