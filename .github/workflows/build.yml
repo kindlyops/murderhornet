@@ -22,8 +22,22 @@ jobs:
           node-version: '14'
       - name: Prepare for app notarization
         if: startsWith(matrix.os, 'macos')
-        # Import App Store Connect API key for app notarization on macOS
+        env:
+          MACOS_CERTIFICATE: ${{ secrets.MAC_APP_CERTS }}
+          MACOS_CERTIFICATE_PWD: ${{ secrets.MAC_APP_CERTS_PASSWORD }}
+          KEYCHAIN_PASSWORD: cicd
         run: |
+          # import code signing identity for MacOS
+          echo -n $MACOS_CERTIFICATE | base64 --decode --output certificate.p12
+          KEYCHAIN_PATH=$RUNNER_TEMP/electron.keychain
+          security create-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
+          # security default-keychain -s $KEYCHAIN_PATH
+          security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
+          security unlock-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
+          security import certificate.p12 -k $KEYCHAIN_PATH -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
+          security find-identity
+          # Import App Store Connect API key for app notarization on macOS
           security add-generic-password -a "elliot.murphy@gmail.com" -w ${{ secrets.MAC_AC_PASSWORD }} -s "AC_PASSWORD"
           mkdir -p ~/private_keys/
           echo '${{ secrets.MAC_APP_API_KEY }}' > ~/private_keys/AuthKey_${{ secrets.MAC_APP_API_KEY_ID }}.p8
@@ -34,7 +48,7 @@ jobs:
           app_id: ${{ secrets.AUTH_FOR_GITHUB_APP_ID }}
           private_key: ${{ secrets.AUTH_FOR_GITHUB_PRIVATE_KEY }}
       - name: Build/release Electron app
-        uses: jsoma/action-electron-builder@master
+        uses: kindlyops/action-electron-forge@master
         env:
           API_KEY_ID: ${{ secrets.MAC_APP_API_KEY_ID }}
           API_KEY_ISSUER_ID: ${{ secrets.MAC_APP_API_KEY_ISSUER_ID }}

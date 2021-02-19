@@ -1,7 +1,7 @@
 {
   "name": "murderhornet",
   "productName": "murderhornet",
-  "version": "1.1.2",
+  "version": "1.2.0",
   "description": "Video streaming for the people",
   "repository": "kindlyops/murderhornet",
   "main": ".webpack/main",
@@ -23,7 +23,7 @@
       "packagerConfig": {
         "icon": "./assets/Icon.icns",
         "osxSign": {
-          "hardened-runtime": true,
+          "hardenedRuntime": true,
           "gatekeeper-assess": false,
           "entitlements": "./src/entitlements.plist",
           "entitlements-inherit": "./src/entitlements.plist",
@@ -77,9 +77,10 @@
           "config": {
             "repository": {
               "owner": "kindlyops",
-              "name": "murderhornet"
+              "name": "murderhornet",
+              "draft": true
             },
-            "prerelease": true
+            "prerelease": false
           }
         }
       ],
@@ -139,6 +140,7 @@
     "aws-sdk": "^2.835.0",
     "electron-squirrel-startup": "^1.0.0",
     "fluent-ffmpeg": "^2.1.2",
+    "postcss-import": "^14.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-select": "^4.1.0",
