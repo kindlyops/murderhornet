@@ -139,6 +139,7 @@
     "aws-sdk": "^2.835.0",
     "electron-squirrel-startup": "^1.0.0",
     "fluent-ffmpeg": "^2.1.2",
+    "postcss-import": "^14.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-select": "^4.1.0",
