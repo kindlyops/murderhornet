@@ -2,11 +2,6 @@ name: Build/release
 
 on: push
 
-# on:
-#   push:
-#     tags:
-#       - 'v*'
-
 jobs:
   release:
     runs-on: ${{ matrix.os }}
@@ -37,7 +32,6 @@ jobs:
           security import certificate.p12 -k $KEYCHAIN_PATH -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
           security find-identity
-          exit 1
           # Import App Store Connect API key for app notarization on macOS
           security add-generic-password -a "elliot.murphy@gmail.com" -w ${{ secrets.MAC_AC_PASSWORD }} -s "AC_PASSWORD"
           mkdir -p ~/private_keys/
