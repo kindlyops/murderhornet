@@ -43,7 +43,7 @@ jobs:
           app_id: ${{ secrets.AUTH_FOR_GITHUB_APP_ID }}
           private_key: ${{ secrets.AUTH_FOR_GITHUB_PRIVATE_KEY }}
       - name: Build/release Electron app
-        timeout-minutes: 30
+        timeout-minutes: 60
         uses: kindlyops/action-electron-forge@master
         env:
           API_KEY_ID: ${{ secrets.MAC_APP_API_KEY_ID }}
