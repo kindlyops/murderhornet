@@ -2,11 +2,6 @@ name: Build/release
 
 on: push
 
-# on:
-#   push:
-#     tags:
-#       - 'v*'
-
 jobs:
   release:
     runs-on: ${{ matrix.os }}
@@ -31,7 +26,7 @@ jobs:
           echo -n $MACOS_CERTIFICATE | base64 --decode --output certificate.p12
           KEYCHAIN_PATH=$RUNNER_TEMP/electron.keychain
           security create-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
-          # security default-keychain -s $KEYCHAIN_PATH
+          security default-keychain -s $KEYCHAIN_PATH
           security set-keychain-settings -lut 21600 $KEYCHAIN_PATH
           security unlock-keychain -p $KEYCHAIN_PASSWORD $KEYCHAIN_PATH
           security import certificate.p12 -k $KEYCHAIN_PATH -P $MACOS_CERTIFICATE_PWD -T /usr/bin/codesign
@@ -48,6 +43,7 @@ jobs:
           app_id: ${{ secrets.AUTH_FOR_GITHUB_APP_ID }}
           private_key: ${{ secrets.AUTH_FOR_GITHUB_PRIVATE_KEY }}
       - name: Build/release Electron app
+        timeout-minutes: 60
         uses: kindlyops/action-electron-forge@master
         env:
           API_KEY_ID: ${{ secrets.MAC_APP_API_KEY_ID }}
